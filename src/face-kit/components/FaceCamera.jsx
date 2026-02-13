@@ -28,26 +28,39 @@ export default function FaceCamera({ onResult, onClose }) {
       streamRef.current?.getTracks().forEach((t) => t.stop());
     };
   }, []);
+const capture = async () => {
+  const canvas = canvasRef.current;
+  const video = videoRef.current;
 
-  const capture = async () => {
-    const canvas = canvasRef.current;
-    const video = videoRef.current;
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext("2d").drawImage(video, 0, 0);
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext("2d").drawImage(video, 0, 0);
+  const image = canvas.toDataURL("image/png");
 
-    const image = canvas.toDataURL("image/png");
+  if (ready) {
+    const res = await detect(image);
+    if (res) {
+      
+      // 🔥 ADD THIS
+      window.parent.postMessage(
+        {
+          type: "FACE_DETECTED",
+          age: res.age,
+          gender: res.gender,
+          image: image,
+        },
+        "https://intentionalconnections.app"
 
-    if (ready) {
-      const res = await detect(image);
-      if (res) {
-        onResult({ ...res, image });
-      }
+      );
+
+      onResult?.({ ...res, image });
     }
+  }
 
-    onClose();
-  };
+  onClose?.();
+};
+
 
   return (
     <div style={overlay}>
