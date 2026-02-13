@@ -50,7 +50,7 @@ const capture = async () => {
           gender: res.gender,
           image: image,
         },
-        "https://intentionalconnections.app"
+        "*"
 
       );
 
