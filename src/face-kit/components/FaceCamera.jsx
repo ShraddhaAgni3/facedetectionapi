@@ -41,6 +41,7 @@ const capture = async () => {
   if (ready) {
     const res = await detect(image);
     if (res) {
+       const fullDate = new Date().toISOString();
       
       // 🔥 ADD THIS
       window.parent.postMessage(
@@ -49,12 +50,13 @@ const capture = async () => {
           age: res.age,
           gender: res.gender,
           image: image,
+          detectedAt: fullDate,
         },
         "*"
 
       );
 
-      onResult?.({ ...res, image });
+      onResult?.({ ...res, image,detectedAt: fullDate, });
     }
   }
 
